@@ -14,7 +14,6 @@ public class Ctecka
             else zaporne = false;
             znak = Console.Read();
         }
-            
         
         // cist cislo
         int x = 0;
