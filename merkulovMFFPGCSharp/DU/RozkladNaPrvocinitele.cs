@@ -4,6 +4,7 @@ namespace merkulovMFFPGCSharp.DU;
 
 public class RozkladNaPrvocinitele
 {
+    /*
     static void Main(string[] args)
     {
         int n = Ctecka.PrectiCislo();
@@ -11,6 +12,7 @@ public class RozkladNaPrvocinitele
         Console.Write(n + "=");
         RozkladNaPrvocisla(n);
     }
+    */
 
     static void RozkladNaPrvocisla(int n)
     {

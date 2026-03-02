@@ -45,4 +45,9 @@ public class Stromecky
             Console.WriteLine();
         }
     }
+
+    public static void Les()
+    {
+        
+    }
 }
