@@ -2,11 +2,12 @@ namespace merkulovMFFPGCSharp;
 
 public class PraceSPoli
 {
+    /*
     static void Main(string[] args)
     {
         VypisSudaCislaAUlozLicha();
     }
-
+    
     static void VypisPoleOpacne(int[] a, int posledniCisloVPoli)
     {
         for (int i = posledniCisloVPoli; i >= 0; i--)
@@ -14,6 +15,7 @@ public class PraceSPoli
             Console.Write(a[i] + " ");
         }
     }
+    */
 
     static void VypisSudaCislaAUlozLicha()
     {
