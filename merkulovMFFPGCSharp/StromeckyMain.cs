@@ -1,6 +1,6 @@
 ﻿namespace merkulovMFFPGCSharp;
 
-class Program
+class StromeckyMain
 {
    public static void Main(string[] args)
     {
