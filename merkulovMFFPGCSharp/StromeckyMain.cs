@@ -2,7 +2,8 @@
 
 class StromeckyMain
 {
-   public static void Main(string[] args)
+   /*
+    public static void Main(string[] args)
     {
         int maxSirka = 0;
         int maxVyska = 0;
@@ -60,4 +61,5 @@ class StromeckyMain
             Console.WriteLine();
         }
     }
+    */
 }
