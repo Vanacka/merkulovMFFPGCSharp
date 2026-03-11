@@ -3,6 +3,9 @@ namespace merkulovMFFPGCSharp;
 public class Ctecka
 {
     public static int PrectiCislo()
+    /*
+     * Precte jedno cislo
+     */
     {
         int znak = Console.Read();
         bool zaporne = false;
@@ -25,5 +28,18 @@ public class Ctecka
 
         if (zaporne) x = -x;
         return x;
+    }
+
+    public static int[] PrectiCisla(int pocetCisel)
+    /*
+     * Precte zadany pocet cisel
+     */
+    {
+        int[] prectenaCisla = new int[pocetCisel];
+        for (int i = 0; i < pocetCisel; i++)
+        {
+            prectenaCisla[i] = PrectiCislo();
+        }
+        return prectenaCisla;
     }
 }
