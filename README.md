@@ -1,2 +1,2 @@
-# Repozitar Programování 2 
+# Programování 2 LS
 ## Ivan Merkulov
