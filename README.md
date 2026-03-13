@@ -1,1 +1,2 @@
-# Repozitar programování 2 Ivan Merkulov
+# Repozitar Programování 2 
+## Ivan Merkulov
