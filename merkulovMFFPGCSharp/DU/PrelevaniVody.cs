@@ -32,101 +32,62 @@ public class Stav
         c = new Nadoba(objemC, aktualniObjemC);
         pocetPreliti = preliti;
     }
-    
-    private int[] PrelejAdoB(int aktualniObjemA, int aktualniObjemB, int objemB)
-        /*
-         * Metoda dostane parametry nadoby A a nabody B preleje z A do B a vrati vysledne objemy obou z nich
-         */
-    {
-        int[] aktualniObjemyAB = new int[2];
-        int kolikSeVejdeDoB = objemB - aktualniObjemB;
-        if (aktualniObjemA > kolikSeVejdeDoB)
-        {
-            aktualniObjemB = objemB;
-            aktualniObjemA -= kolikSeVejdeDoB;
-        }
-        else
-        {
-            aktualniObjemB += aktualniObjemA;
-            aktualniObjemA = 0;
-        }
-
-        aktualniObjemyAB[0] = aktualniObjemA;
-        aktualniObjemyAB[1] = aktualniObjemB;
-
-        return aktualniObjemyAB;
-    }
 
     public List<Stav> ZiskejDalsiStavy()
     /*
      * Metoda zjisti vsechny dalsi mozne stavy, ktere mohu ziskat
      */
     {
+        // Vytvorim list stavu nadob a pomocne pole na objemy
         List<Stav> dalsiStavy = new List<Stav>();
-        int[] objemy;
+        Nadoba[] noveNadoby = {a, b, c};
+        int[] noveObjemy = new int[3];
         
-        // Preliti z A do B
-        if (b.AktualniObjem != b.Objem && a.AktualniObjem > 0)
+        // Iteruji 2 cykly abych mohl ziskat vsech 6 kombinaci stavu
+        for (int i = 0; i < noveNadoby.Length; i++)
         {
-            objemy = PrelejAdoB(a.AktualniObjem, b.AktualniObjem, b.Objem);
-            Stav prelitiAdoB = new Stav(a.Objem, objemy[0], b.Objem, objemy[1], c.Objem, c.AktualniObjem,
-                pocetPreliti + 1);
-            dalsiStavy.Add(prelitiAdoB);   
-        }
-        
-        // Preliti z A do C
-        if (c.AktualniObjem != c.Objem && a.AktualniObjem > 0)
-        {
-            objemy = PrelejAdoB(a.AktualniObjem, c.AktualniObjem, c.Objem);
-            Stav prelitiAdoC = new Stav(a.Objem, objemy[0], b.Objem, b.AktualniObjem, c.Objem, objemy[1],
-                pocetPreliti + 1);
-            dalsiStavy.Add(prelitiAdoC);
-        }
-        
-        // Preliti z B do C
-        if (c.AktualniObjem != c.Objem && b.AktualniObjem > 0)
-        {
-            objemy = PrelejAdoB(b.AktualniObjem, c.AktualniObjem, c.Objem);
-            Stav prelitiBdoC = new Stav(a.Objem, a.AktualniObjem, b.Objem, objemy[0], c.Objem, objemy[1],
-                pocetPreliti + 1);
-            dalsiStavy.Add(prelitiBdoC);
-        }
+            for (int j = 0; j < noveNadoby.Length; j++)
+            {
+                // Abych nepreleval ze stejne do stejne
+                if (j != i)
+                {
+                    // Nastavim prozatimni potrebne objemy
+                    int aktualniObjemDostavajici = noveNadoby[j].AktualniObjem;
+                    int objemDostavajici = noveNadoby[j].Objem;
+                    int aktualniObjemPredavajici = noveNadoby[i].AktualniObjem;
+                    
+                    // Pokud muzu prelevat a v prelevajici nadobe neni 0
+                    if (aktualniObjemDostavajici != objemDostavajici && aktualniObjemPredavajici > 0)
+                    {
+                        noveObjemy[0] = a.AktualniObjem;
+                        noveObjemy[1] = b.AktualniObjem;
+                        noveObjemy[2] = c.AktualniObjem;
 
-        // Preliti z C do B
-        if (b.AktualniObjem != b.Objem && c.AktualniObjem > 0)
-        {
-            objemy = PrelejAdoB(c.AktualniObjem, b.AktualniObjem, b.Objem);
-            Stav prelitiCdoB = new Stav(a.Objem, a.AktualniObjem, b.Objem, objemy[1], c.Objem, objemy[0],
-                pocetPreliti + 1);
-            dalsiStavy.Add(prelitiCdoB);
-        }
+                        int kolikSeVejde = objemDostavajici - aktualniObjemDostavajici;
+                        int kolikPrelejeme = Math.Min(kolikSeVejde, aktualniObjemPredavajici);
 
-        // Preliti z C do A
-        if (a.AktualniObjem != a.Objem && c.AktualniObjem > 0)
-        {
-            objemy = PrelejAdoB(c.AktualniObjem, a.AktualniObjem, a.Objem);
-            Stav prelitiCdoA = new Stav(a.Objem, objemy[1], b.Objem, b.AktualniObjem, c.Objem, objemy[0],
-                pocetPreliti + 1);
-            dalsiStavy.Add(prelitiCdoA);
-        }
+                        noveObjemy[i] -= kolikPrelejeme;
+                        noveObjemy[j] += kolikPrelejeme;
 
-        // Preliti z B do A
-        if (a.AktualniObjem != a.Objem && b.AktualniObjem > 0)
-        {
-            objemy = PrelejAdoB(b.AktualniObjem, a.AktualniObjem, a.Objem);
-            Stav prelitiBdoA = new Stav(a.Objem, objemy[1], b.Objem, objemy[0], c.Objem, c.AktualniObjem,
-                pocetPreliti + 1);
-            dalsiStavy.Add(prelitiBdoA);
+                        Stav novyStav = new Stav(a.Objem, noveObjemy[0], b.Objem, noveObjemy[1], c.Objem,
+                            noveObjemy[2], pocetPreliti + 1);
+                        dalsiStavy.Add(novyStav);
+                    }
+                }
+            }
         }
         return dalsiStavy;
     }
 
     public override int GetHashCode()
+    /*
+     * Vlastni upravena metoda na pocitani hashe objektu, protoze nechci aby se mi vytvarel ten hash z parametru pocetPreliti
+     */
     {
         return HashCode.Combine(a.AktualniObjem, b.AktualniObjem, c.AktualniObjem);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     /*
      * Vlastni metoda Equals na porovnavani Stavu aby se neporovnavali v parametru pocetPreliti
      */
@@ -288,19 +249,24 @@ public class PrelevaniVody
         frontaStavu.Enqueue(pocatecniStav);
         ZkoumaneStavy prozkoumaneStavy = new ZkoumaneStavy();
         prozkoumaneStavy.pridejStav(pocatecniStav);
-
+        
+        // Dokud fronta neni prazdna
         while (frontaStavu.Count > 0)
         {
+            // Vyndam prvni stav z fronty
             Stav praveZkoumany = frontaStavu.Dequeue();
+            // Pridam stav do mnoziny stavu abych ho uz nepridaval do fronty
             prozkoumaneStavy.pridejStav(praveZkoumany);
             int x = praveZkoumany.a.AktualniObjem;
             int y = praveZkoumany.b.AktualniObjem;
             int z = praveZkoumany.c.AktualniObjem;
             int pocetPreliti = praveZkoumany.pocetPreliti;
             
+            // Zmeni objem pokud jsem ho dostal za lepsi pocet preliti nez predtim
             mozneObjemy.zmenObjem(x, pocetPreliti);
             mozneObjemy.zmenObjem(y, pocetPreliti);
             mozneObjemy.zmenObjem(z, pocetPreliti);
+            // Ziskam dalsi stavy po preliti
             List<Stav> sousedniStavy = praveZkoumany.ZiskejDalsiStavy();
 
             foreach (Stav stav in sousedniStavy)
