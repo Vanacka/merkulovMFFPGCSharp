@@ -1,7 +1,7 @@
 using merkulovMFFPGCSharp.DU;
 
 namespace merkulovMFFPGCSharp;
-
+/*
 class Program
 {
     public static void Main(string[] args)
@@ -9,4 +9,4 @@ class Program
         PrelevaniVody prelevaniVody = new PrelevaniVody();
         prelevaniVody.Hlavni();
     }
-}
+}*/
