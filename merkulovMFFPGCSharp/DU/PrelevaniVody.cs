@@ -15,7 +15,7 @@ public struct Nadoba
     }
 }
 
-public class Stav
+public class StavPreliti
 /*
  * Uchovava aktualni stav nadob
  */
@@ -25,7 +25,7 @@ public class Stav
     public Nadoba c;
     public int pocetPreliti;
 
-    public Stav(int objemA, int aktualniObjemA, int objemB, int aktualniObjemB, int objemC, int aktualniObjemC, int preliti)
+    public StavPreliti(int objemA, int aktualniObjemA, int objemB, int aktualniObjemB, int objemC, int aktualniObjemC, int preliti)
     {
         a = new Nadoba(objemA, aktualniObjemA);
         b = new Nadoba(objemB, aktualniObjemB);
@@ -33,13 +33,13 @@ public class Stav
         pocetPreliti = preliti;
     }
 
-    public List<Stav> ZiskejDalsiStavy()
+    public List<StavPreliti> ZiskejDalsiStavy()
     /*
      * Metoda zjisti vsechny dalsi mozne stavy, ktere mohu ziskat
      */
     {
         // Vytvorim list stavu nadob a pomocne pole na objemy
-        List<Stav> dalsiStavy = new List<Stav>();
+        List<StavPreliti> dalsiStavy = new List<StavPreliti>();
         Nadoba[] noveNadoby = {a, b, c};
         int[] noveObjemy = new int[3];
         
@@ -69,9 +69,9 @@ public class Stav
                         noveObjemy[i] -= kolikPrelejeme;
                         noveObjemy[j] += kolikPrelejeme;
 
-                        Stav novyStav = new Stav(a.Objem, noveObjemy[0], b.Objem, noveObjemy[1], c.Objem,
+                        StavPreliti novyStavPreliti = new StavPreliti(a.Objem, noveObjemy[0], b.Objem, noveObjemy[1], c.Objem,
                             noveObjemy[2], pocetPreliti + 1);
-                        dalsiStavy.Add(novyStav);
+                        dalsiStavy.Add(novyStavPreliti);
                     }
                 }
             }
@@ -92,12 +92,12 @@ public class Stav
      * Vlastni metoda Equals na porovnavani Stavu aby se neporovnavali v parametru pocetPreliti
      */
     {
-        if (obj is Stav)
+        if (obj is StavPreliti)
         {
-            Stav druhyStav = (Stav)obj;
-            return a.AktualniObjem == druhyStav.a.AktualniObjem &&
-                   b.AktualniObjem == druhyStav.b.AktualniObjem &&
-                   c.AktualniObjem == druhyStav.c.AktualniObjem;
+            StavPreliti druhyStavPreliti = (StavPreliti)obj;
+            return a.AktualniObjem == druhyStavPreliti.a.AktualniObjem &&
+                   b.AktualniObjem == druhyStavPreliti.b.AktualniObjem &&
+                   c.AktualniObjem == druhyStavPreliti.c.AktualniObjem;
         }
         return false;
     }
@@ -108,21 +108,21 @@ public class ZkoumaneStavy
  * Udrzuje si jiz prozkoumane stavy abychom je zbytecne nezkoumali znovu
  */
 {
-    public HashSet<Stav> prozkoumaneStavy;
+    public HashSet<StavPreliti> prozkoumaneStavy;
 
     public ZkoumaneStavy()
     {
-        prozkoumaneStavy = new HashSet<Stav>();
+        prozkoumaneStavy = new HashSet<StavPreliti>();
     }
 
-    public void pridejStav(Stav stav)
+    public void pridejStav(StavPreliti stavPreliti)
     {
-        prozkoumaneStavy.Add(stav);
+        prozkoumaneStavy.Add(stavPreliti);
     }
 
-    public bool obsahujeStav(Stav stav)
+    public bool obsahujeStav(StavPreliti stavPreliti)
     {
-        return prozkoumaneStavy.Contains(stav);
+        return prozkoumaneStavy.Contains(stavPreliti);
     }
 }
 
@@ -172,7 +172,7 @@ public class PrelevaniVody
         int z = objemyVNadobach[2];
         
         // Vytvorim pocatecni stav
-        Stav pocatecniStav = new Stav(a, x, b, y, c, z, 0);
+        StavPreliti pocatecniStavPreliti = new StavPreliti(a, x, b, y, c, z, 0);
         
         // Zjistim jakeho nejvetsiho objemu v nadobach muzeme dosahnout proto abych zjistil rozsah zkoumanych hodnot
         int nejvetsiMoznyObjem = 0;
@@ -194,7 +194,7 @@ public class PrelevaniVody
         mozneObjemy.zmenObjem(z, 0);
         
         // Najdu vsechny varianty preliti
-        BFS(pocatecniStav, mozneObjemy);
+        BFS(pocatecniStavPreliti, mozneObjemy);
         
         // Vytisknu konecne objemy
         VytiskniObjemy(mozneObjemy);
@@ -240,21 +240,21 @@ public class PrelevaniVody
         return maxObjem;
     }
 
-    private void BFS(Stav pocatecniStav, MozneObjemy mozneObjemy)
+    private void BFS(StavPreliti pocatecniStavPreliti, MozneObjemy mozneObjemy)
     /*
      * Metoda, ktera prozkoumava ruzne stavy do sirky
      */
     {
-        Queue<Stav> frontaStavu = new Queue<Stav>();
-        frontaStavu.Enqueue(pocatecniStav);
+        Queue<StavPreliti> frontaStavu = new Queue<StavPreliti>();
+        frontaStavu.Enqueue(pocatecniStavPreliti);
         ZkoumaneStavy prozkoumaneStavy = new ZkoumaneStavy();
-        prozkoumaneStavy.pridejStav(pocatecniStav);
+        prozkoumaneStavy.pridejStav(pocatecniStavPreliti);
         
         // Dokud fronta neni prazdna
         while (frontaStavu.Count > 0)
         {
             // Vyndam prvni stav z fronty
-            Stav praveZkoumany = frontaStavu.Dequeue();
+            StavPreliti praveZkoumany = frontaStavu.Dequeue();
             // Pridam stav do mnoziny stavu abych ho uz nepridaval do fronty
             prozkoumaneStavy.pridejStav(praveZkoumany);
             int x = praveZkoumany.a.AktualniObjem;
@@ -267,9 +267,9 @@ public class PrelevaniVody
             mozneObjemy.zmenObjem(y, pocetPreliti);
             mozneObjemy.zmenObjem(z, pocetPreliti);
             // Ziskam dalsi stavy po preliti
-            List<Stav> sousedniStavy = praveZkoumany.ZiskejDalsiStavy();
+            List<StavPreliti> sousedniStavy = praveZkoumany.ZiskejDalsiStavy();
 
-            foreach (Stav stav in sousedniStavy)
+            foreach (StavPreliti stav in sousedniStavy)
             {
                 if (!prozkoumaneStavy.obsahujeStav(stav))
                 {
