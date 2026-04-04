@@ -42,4 +42,23 @@ public class Ctecka
         }
         return prectenaCisla;
     }
+
+    public static string[] PrectiRadek()
+    {
+        string? radek = Console.ReadLine();
+        // Pokud muze byt radek null
+        if (radek == null) return new string[0];
+        
+        string[] rozdelenyRadek = radek.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return rozdelenyRadek;
+    }
+
+    public static char[] PrectiARozdelRadekNaZnaky()
+    {
+        string? radek = Console.ReadLine();
+        // Pokud muze byt radek null
+        if (radek == null) return new char[0];
+        
+        return radek.Trim().ToCharArray();
+    }
 }

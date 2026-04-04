@@ -1,12 +1,11 @@
 using merkulovMFFPGCSharp.DU;
 
 namespace merkulovMFFPGCSharp;
-/*
 class Program
 {
     public static void Main(string[] args)
     {
-        PrelevaniVody prelevaniVody = new PrelevaniVody();
-        prelevaniVody.Hlavni();
+        SokobanCiliSkladnik sokobanCiliSkladnik = new SokobanCiliSkladnik();
+        sokobanCiliSkladnik.Hlavni();
     }
-}*/
+}
