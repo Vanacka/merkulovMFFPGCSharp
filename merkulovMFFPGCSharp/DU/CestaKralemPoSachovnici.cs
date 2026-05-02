@@ -2,20 +2,22 @@ using System.Collections;
 
 namespace merkulovMFFPGCSharp.DU;
 
-public struct Souradnice
+public class Souradnice
 /*
- * Struktura, ktera uchovava souradnic na sachovnici a zaroven vzdalenost ke startu
+ * Trida, ktera uchovava souradnic na sachovnici a zaroven vzdalenost ke startu
  */
 {
     public int Radek;
     public int Sloupec;
     public int VzdalenostOdStartu;
+    public Souradnice Predchudce;
 
-    public Souradnice(int r, int s, int v)
+    public Souradnice(int r, int s, int v, Souradnice p)
     {
         Radek = r;
         Sloupec = s;
         VzdalenostOdStartu = v;
+        Predchudce = p;
     }
 }
 public class CestaKralemPoSachovnici
@@ -30,7 +32,7 @@ public class CestaKralemPoSachovnici
      */
     {
         // Prectu kolik bude prekazek na vstupu
-        int pocetPrekazek = int.Parse(Console.ReadLine());
+        int pocetPrekazek = Ctecka.PrectiCislo();
         
         int[] prekazka;
         int radekPrekazky = 0;
@@ -39,22 +41,22 @@ public class CestaKralemPoSachovnici
         // Nastavim prekazky jako -2
         for (int i = 0; i < pocetPrekazek; i++)
         {
-            prekazka = Console.ReadLine()!.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+            prekazka = Ctecka.PrectiCisla(2);
             radekPrekazky = prekazka[0] - 1;
             sloupecPrekazky = prekazka[1] - 1;
             sachovnice[radekPrekazky, sloupecPrekazky] = -2;
         }
         // Vytvorim souradnici zacatku se vzdalenosti 0
-        prekazka = Console.ReadLine()!.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+        prekazka = Ctecka.PrectiCisla(2);
         radekPrekazky = prekazka[0] - 1;
         sloupecPrekazky = prekazka[1] - 1;
-        Souradnice zacatek = new Souradnice(radekPrekazky, sloupecPrekazky, 0);
+        Souradnice zacatek = new Souradnice(radekPrekazky, sloupecPrekazky, 0, null);
         
         // Vytvorim souradnici konce se vzdalenosti -1
-        prekazka = Console.ReadLine()!.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+        prekazka = Ctecka.PrectiCisla(2);
         radekPrekazky = prekazka[0] - 1;
         sloupecPrekazky = prekazka[1] - 1;
-        Souradnice cil = new Souradnice(radekPrekazky, sloupecPrekazky, -1);
+        Souradnice cil = new Souradnice(radekPrekazky, sloupecPrekazky, -1, null);
         sachovnice[radekPrekazky, sloupecPrekazky] = -1;
         
         // Kdyz bude zacatek stejny jako cil nema smysl spoustet BFS
@@ -65,7 +67,10 @@ public class CestaKralemPoSachovnici
         else
         {
             int vzdalenost = BFS(zacatek, cil);
-            Console.WriteLine(vzdalenost);
+            if (vzdalenost == -1)
+            {
+                Console.WriteLine(vzdalenost);
+            }
         }
     }
 
@@ -90,6 +95,7 @@ public class CestaKralemPoSachovnici
             if (sachovnice[radek, sloupec] == -1)
             {
                 sachovnice[radek, sloupec] = aktualniVzdalenost;
+                VypisCestu(zkoumany);
                 return aktualniVzdalenost;
             }
             
@@ -132,11 +138,35 @@ public class CestaKralemPoSachovnici
                 // Pokud se prictenim smeru dostanu na policko, kde neni prekazka
                 if ((sachovnice[souradniceRadku, souradniceSloupce] == -1) || (sachovnice[souradniceRadku, souradniceSloupce] == 0))
                 {
-                    Souradnice soused = new Souradnice(souradniceRadku, souradniceSloupce, vzdalenostOdStartu + 1);
+                    Souradnice soused = new Souradnice(souradniceRadku, souradniceSloupce, vzdalenostOdStartu + 1, zkoumany);
                     sousede.Add(soused);
                 }
             }
         }
         return sousede;
+    }
+
+    void VypisCestu(Souradnice cil)
+    /*
+     * Funkce vypise nejkratsi cestu krale od startu k cili
+     */
+    {
+        List<Souradnice> souradniceCesty = new List<Souradnice>();
+        Souradnice zkoumana = cil;
+        int radek = 0;
+        int sloupec = 0;
+        
+        while (zkoumana != null)
+        {
+            souradniceCesty.Add(zkoumana);
+            zkoumana = zkoumana.Predchudce;
+        }
+
+        for (int i = souradniceCesty.Count - 1; i >= 0; i--)
+        {
+            radek = souradniceCesty[i].Radek;
+            sloupec = souradniceCesty[i].Sloupec;
+            Console.WriteLine($"{radek + 1} {sloupec + 1}");
+        }
     }
 }

@@ -5,7 +5,8 @@ class Program
 {
     public static void Main(string[] args)
     {
-        Abeceda abeceda = new Abeceda();
-        abeceda.Hlavni();
+
+        CestaKralemPoSachovnici cestaKralemPoSachovnici = new CestaKralemPoSachovnici();
+        cestaKralemPoSachovnici.Hlavni();
     }
 }
