@@ -10,28 +10,47 @@ public class Vykazy
         string[] radek = Ctecka.PrectiRadek();
         int celkovyCas = 0;
         int casAktivity;
+        string mesicAktivity;
+
+        Dictionary<string, int> casPoMesicich = new Dictionary<string, int>();
 
         while (true)
         {
+            // Pokud je prazdny radek
             if (radek.Length == 0)
             {
                 radek = Ctecka.PrectiRadek();
                 continue;
             }
-
-            if (radek[0] == ".")
+            // Pokud radek obsahuje pouze tecku
+            if (radek.Length == 1 && radek[0] == ".")
             {
                 break;
             }
             if (JeValidiniRadek(radek))
             {
                 casAktivity = CasNaSekundy(radek[^1]) - CasNaSekundy(radek[1]);
+                mesicAktivity = ZjistiMesicARok(radek[0]);
+                if (casPoMesicich.ContainsKey(mesicAktivity))
+                {
+                    casPoMesicich[mesicAktivity] += casAktivity;
+                }
+                else
+                {
+                    casPoMesicich.Add(mesicAktivity, casAktivity);
+                }
                 celkovyCas += casAktivity;
             }
 
             radek = Ctecka.PrectiRadek();
         }
 
+        foreach (KeyValuePair<string, int> keyValuePair in casPoMesicich)
+        {
+            string mesic = keyValuePair.Key;
+            string casMesicniAktivity = SekundyNaCas(keyValuePair.Value);
+            Console.WriteLine($"{mesic}: {casMesicniAktivity}");
+        }
         Console.WriteLine($"celkem: {SekundyNaCas(celkovyCas)}");
     }
 
@@ -82,7 +101,18 @@ public class Vykazy
 
         return naformatovanaJednotka;
     }
-    
+
+    private string ZjistiMesicARok(string datum)
+    /*
+     * Funkce dostane datum a z neho zjisti mesic
+     */
+    {
+        string[] rozdeleneDatum = datum.Split('.');
+        string mesic = rozdeleneDatum[1];
+        string rok = rozdeleneDatum[2];
+
+        return $"{mesic}/{rok}";
+    }
     private bool JeValidiniRadek(string[] radek)
     /*
      * Funkce overi zda-li radek je validni nebo ne
