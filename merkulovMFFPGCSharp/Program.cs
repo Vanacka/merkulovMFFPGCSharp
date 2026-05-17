@@ -1,4 +1,6 @@
 using System.Xml.XPath;
+using merkulovMFFPGCSharp.DU;
+
 //using merkulovMFFPGCSharp.DU;
 
 namespace merkulovMFFPGCSharp;
@@ -6,7 +8,7 @@ class Program
 {
     public static void Main(string[] args)
     {
-        Vykazy vykazy = new Vykazy();
-        vykazy.Hlavni();
+        PriseraVBludisti priseraVBludisti = new PriseraVBludisti();
+        priseraVBludisti.Hlavni();
     }
 }

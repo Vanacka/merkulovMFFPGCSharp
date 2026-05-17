@@ -163,19 +163,7 @@ public class Prisera
         Y += yPosun;
     }
 
-    private bool JeZlevaZed()
-    /*
-     * Funkce zjisti zda-li ma prisera zleva zed
-     */
-    {
-        Smer levySmer = SmeryLogika.KamSeOtocimDoleva(AktualniSmer);
-        (int xSmer, int ySmer) = SmeryLogika.SmerNaPohyb(levySmer);
-        bool jeTamZed = _mapa.JeTamZed(X + xSmer, Y + ySmer);
-
-        return jeTamZed;
-    }
-
-    private bool JeZpravaZed()
+    private bool JeZpravaZedNeboPrisera()
     /*
      * Funkce zjisti zda-li ma prisera zprava zed
      */
@@ -183,19 +171,21 @@ public class Prisera
         Smer pravySmer = SmeryLogika.KamSeOtocimDoprava(AktualniSmer);
         (int xSmer, int ySmer) = SmeryLogika.SmerNaPohyb(pravySmer);
         bool jeTamZed = _mapa.JeTamZed(X + xSmer, Y + ySmer);
+        bool jeTamPrisera = _mapa.JeTamPrisera(X + xSmer, Y + ySmer, this);
 
-        return jeTamZed;
+        return jeTamZed || jeTamPrisera;
     }
 
-    private bool JePredemnouZed()
+    private bool JePredemnouZedNeboPrisera()
     /*
      * Funkce zjisti zda-li ma prisera pred sebou zed
      */
     {
         (int xSmer, int ySmer) = SmeryLogika.SmerNaPohyb(AktualniSmer);
         bool jeTamZed = _mapa.JeTamZed(X + xSmer, Y + ySmer);
+        bool jeTamPrisera = _mapa.JeTamPrisera(X + xSmer, Y + ySmer, this);
 
-        return jeTamZed;
+        return jeTamZed || jeTamPrisera;
     }
     
     public void ProvedTah()
@@ -208,12 +198,12 @@ public class Prisera
             PosunSeDopredu();
             JduDopredu = false;
         }
-        else if (!JeZpravaZed())
+        else if (!JeZpravaZedNeboPrisera())
         {
             OtocSeDoprava();
             JduDopredu = true;
         }
-        else if (!JePredemnouZed())
+        else if (!JePredemnouZedNeboPrisera())
         {
             PosunSeDopredu();
             JduDopredu = false;
@@ -229,6 +219,7 @@ public class Prisera
 public class Bludiste
 {
     public char[,] HraciPole;
+    public List<Prisera> Prisery = new List<Prisera>();
 
     public Bludiste(int sirka, int vyska)
     {
@@ -244,6 +235,21 @@ public class Bludiste
         if (znak == 'X')
         {
             return true;
+        }
+        return false;
+    }
+
+    public bool JeTamPrisera(int x, int y, Prisera ptajiciSePrisera)
+    /*
+     * Funkce zjisti jestli se na danych souradnicich nenachazi jina prisera
+     */
+    {
+        foreach (Prisera prisera in Prisery)
+        {
+            if (prisera != ptajiciSePrisera && prisera.X == x && prisera.Y == y)
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -279,6 +285,9 @@ public class PriseraVBludisti
                     priseraX = j;
                     priseraY = i;
                     smerPrisery = SmeryLogika.ZnakNaSmer(znak);
+                    // Vytvorim priseru
+                    Prisera novaPrisera = new Prisera(priseraX, priseraY, smerPrisery, bludiste);
+                    bludiste.Prisery.Add(novaPrisera);
                     bludiste.HraciPole[i, j] = '.';
                 }
                 else
@@ -287,31 +296,40 @@ public class PriseraVBludisti
                 }
             }
         }
-        
-        // Vytvorim priseru
-        Prisera prisera = new Prisera(priseraX, priseraY, smerPrisery, bludiste);
 
         for (int i = 0; i < pocetTahu; i++)
         {
-            prisera.ProvedTah();
-            VypisHraciPole(prisera.X, prisera.Y, prisera.AktualniSmer, bludiste, vyska, sirka);
+            foreach (Prisera prisera in bludiste.Prisery)
+            {
+                prisera.ProvedTah();
+            }
+            VypisHraciPole(bludiste, vyska, sirka);
         }
     }
 
-    public void VypisHraciPole(int priseraX, int priseraY, Smer priseraOrientace, Bludiste bludiste, int vyska, int sirka)
+    public void VypisHraciPole(Bludiste bludiste, int vyska, int sirka)
     /*
      * Funkce vypise hraci pole s aktualni orientaci a pozici prisery
      */
     {
+        Prisera nalezenaPrisera = null;
         for (int i = 0; i < vyska; i++)
         {
             for (int j = 0; j < sirka; j++)
             {
                 char znak = bludiste.HraciPole[i, j];
-                
-                if (j == priseraX && i == priseraY)
+                foreach (Prisera prisera in bludiste.Prisery)
                 {
-                    znak = SmeryLogika.SmerNaZnak(priseraOrientace);
+                    if (j == prisera.X && i == prisera.Y)
+                    {
+                        nalezenaPrisera = prisera;
+                        break;
+                    }
+                }
+                if (nalezenaPrisera != null)
+                {
+                    znak = SmeryLogika.SmerNaZnak(nalezenaPrisera.AktualniSmer);
+                    nalezenaPrisera = null;
                 }
                 Console.Write(znak);
             }
